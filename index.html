@@ -8,6 +8,7 @@
 	<script src="pingpong.js"></script>
 	<body>
 		<div id = "addPlayer">
+			<h3>Add Player</h3>
 			<p>Enter input in the fields, then click "Submit"</p>
 
 			<label for="firstName">First name: </label> 
@@ -19,12 +20,13 @@
 			<label for="ID">ID: </label> 
 			<input type="number" name="ID" id="ID"><br>
 			
-			<input type="button" onclick="addPlayerClick()" value="Submit">
+			<input type="button" onclick="addPlayerClick()" value="Add">
 
 			<p id = "addPlayerMessage"> </p><br><br>
 		</div>
 
 		<div id = "startMatch">
+			<h3>Start Match</h3>
 			<p>Enter the ID's of the players, then click "Submit</p>
 
 			<label for="playerOneStart">Player One: </label> 
@@ -33,12 +35,13 @@
 			<label for="playerTwoStart">Player Two: </label> 
 			<input type="number" name="playerTwoStart" id="playerTwoStart"><br>
 
-			<input type="button" onclick="startMatch()" value="Start Match">
+			<input type="button" onclick="startMatchClick()" value="Start Match">
 
 			<p id = "startMatchMessage"> </p><br><br>
 		</div>
 
 		<div id = "endMatch">
+			<h3>End Match</h3>
 			<p>Enter the ID's of the players, then click "Submit</p>
 
 			<label for="playerOneEnd">Player One: </label> 
@@ -53,10 +56,25 @@
 			<label for="playerTwoScore">Player Two's Score</label>
 			<input type="number" name="playerTwoScore" id="playerTwoScore"><br>
 
-			<input type="button" onclick="endMatch()" value="End Match"><br><br>
+			<input type="button" onclick="endMatchClick()" value="End Match">
+
+			<p id = "endMatchMessage"> </p><br><br>
+		</div>
+
+		<div id = "simulation">
+			<h3>Simulation</h3>
+
+			<label for="numPlayers">Number of Players: </label> 
+			<input type="number" name="numPlayers" id="numPlayers"><br>
+
+			<input type="button" onclick="simulate()" value="Simulate">
+
+			<p id = "simulationMessage"> </p><br><br>
 		</div>
 
 		<div id = "rankingsTable">
+			<h3>Rankings</h3><br>
+
 			<table id = "rankings">
 				<tr class = "tableHeader">
 					<td>Rank</td>
@@ -72,7 +90,7 @@
 		function addPlayerClick() {
 			var firstName = document.getElementById("firstName").value;
 			var lastName = document.getElementById("lastName").value;
-			var ID = document.getElementById("ID").value;
+			var ID = parseInt(document.getElementById("ID").value, 10);
 			var player = new Player(firstName, lastName, ID);
 			players.add(player);
 			document.getElementById("firstName").value = "";
@@ -80,25 +98,25 @@
 			document.getElementById("ID").value = "";
 		}
 
-		function startMatch() {
+		function startMatchClick() {
 			var playerOne = players.getPlayerByID(document.getElementById("playerOneStart").value);
 			var playerTwo = players.getPlayerByID(document.getElementById("playerTwoStart").value);
-			var whichPlayer = Math.floor(Math.random() * 2 + 1);
-			console.log(whichPlayer);
-			if (whichPlayer == 1) {
-				document.getElementById("startMatchMessage").innerHTML = playerOne.firstName + " serves.";
-			}
-			else {
-				document.getElementById("startMatchMessage").innerHTML = playerTwo.firstName + " serves.";
-			}
+			var whichPlayer = Math.floor(Math.random() * 2 + 1) == 1 ? playerOne.firstName : playerTwo.firstName;
+			document.getElementById("startMatchMessage").innerHTML = whichPlayer + " serves.";
 		}
 
-		function endMatch() {
+		function endMatchClick() {
 			var playerOne = document.getElementById("playerOneEnd").value;
 			var playerTwo = document.getElementById("playerTwoEnd").value;
 			var playerOneScore = parseInt(document.getElementById("playerOneScore").value, 10);
 			var playerTwoScore = parseInt(document.getElementById("playerTwoScore").value, 10);
 			players.finishMatch(playerOne, playerOneScore, playerTwo, playerTwoScore);
+		}
+
+		function simulate() {
+			var numPlayers = parseInt(document.getElementById("numPlayers").value, 10);
+			var simulation = new Simulation(numPlayers);
+			simulation.doAllMatches();
 		}
 	</script>
 	</html>

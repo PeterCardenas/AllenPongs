@@ -1,12 +1,12 @@
-const INIT_PT_VAL = 50;
-const EQ_PT_CHANGE = 10;
-const MAX_PT_CHANGE = 50;
-const MIN_PT_CHANGE = 5;
-const WIN_STREAK_BASE = 5;
+const INIT_PT_VAL      = 50;
+const EQ_PT_CHANGE     = 10;
+const MAX_PT_CHANGE    = 50;
+const MIN_PT_CHANGE    = 5;
+const WIN_STREAK_BASE  = 5;
 const WIN_STREAK_START = 3;
-const LOSS_PERCT_LOSS = 5;
-const MIN_PT = 0;
-class Player {
+const LOSS_PERCT_LOSS  = 5;
+const MIN_PT           = 0;
+class Player { 
 	constructor(firstName, lastName, ID) {
 		this.firstName = firstName;
 		this.lastName = lastName;
@@ -20,7 +20,7 @@ class Player {
 		this.lossPerct = 100;
 	}
 
-	description() {
+	get description() {
 		return this.firstName + this.lastName + this.ID + this.points;
 	}
 
@@ -98,12 +98,12 @@ class Players {
 		this.rank();
 	}
 
-	count() {
+	get count() {
 		return this.list.length;
 	}
 
 	getPlayerByID(ID) {
-		for (var i = 0; i < this.list.length; i++) {
+		for (var i = 0; i < this.count; i++) {
 			if (this.list[i].ID === ID) {
 				return this.list[i];
 			}
@@ -133,7 +133,7 @@ class Players {
 		}
 		i = 0;
 		var currRow, rankCell, nameCell, pointCell;
-		for(; i < this.list.length; i++) {
+		for (; i < this.count; i++) {
 			currRow = table.insertRow(-1);
 			rankCell = currRow.insertCell(0);
 			nameCell = currRow.insertCell(1);
@@ -143,8 +143,40 @@ class Players {
 			pointCell.innerHTML = this.list[i].points;
 		}
 	}
+}
 
-	simulate(numPlayers) {
-		
+class SimPlayer extends Player {
+	constructor(index) {
+		super("Player", index, index);
+		this.skill = 0;
+	}
+
+	finishMatch(opponent, win) {
+		super.finishMatch(opponent, win);
+	}
+}
+
+class Simulation extends Players {
+	constructor(numPlayers) {
+		super();
+
+		for (var i = 1; i <= numPlayers; i++) {
+			this.add(new SimPlayer(i));
+		}
+	}
+
+	doMatch(playerOne, playerTwo) {
+		var playerOneWin = Math.floor(Math.random() * 2 + 1) == 1;
+		playerOne.finishMatch(playerTwo, playerOneWin);
+		playerTwo.finishMatch(playerOne, !playerOneWin);
+		this.rank();
+	}
+
+	doAllMatches() {
+		for (var i = 0; i < this.count; i++) {
+			for (var j = i; j < this.count; j++) {
+				this.doMatch(this.list[i], this.list[j]);
+			}
+		}
 	}
 }
