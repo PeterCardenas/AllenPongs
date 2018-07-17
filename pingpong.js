@@ -1,8 +1,7 @@
 const INIT_PT_VAL      = 50;
 const EQ_PT_CHANGE     = 10;
-//const MAX_PT_CHANGE    = 50;
-const MIN_PT_GAIN      = 10;
-const MIN_PT_LOSS      = 0;
+const MIN_PT_GAIN      = 5;
+const MIN_PT_LOSS      = 10;
 const STREAK_START     = 3;
 const WIN_STREAK_BASE  = 5;
 const LOSS_PERCT_LOSS  = .05;
@@ -10,6 +9,7 @@ const MIN_PT           = 0;
 const WEAK_MULTIPLIER  = .3;
 const MIN_DIFF_FOR_MAX = 50;
 const NUM_BARS_GRAPH   = 8;
+const PENALTY_START    = 60;
 
 class Player { 
 	constructor(firstName, lastName, ID) {
@@ -26,7 +26,7 @@ class Player {
 	}
 
 	get description() {
-		return this.firstName + this.lastName + this.ID + this.points;
+		return this.firstName + " " + this.lastName + " " + this.ID + " " + this.points;
 	}
 
 	get name() {
@@ -34,13 +34,19 @@ class Player {
 	}
 
 	finishMatch(opponent, win) {
+		this.points += this.getPointChange(opponent, win);
+
+		this.points = parseInt(this.points, 10);
+
+		if (this.points < MIN_PT) {
+			this.points = MIN_PT;
+		}
+	}
+
+	getPointChange(opponent, win) {
 		var change = EQ_PT_CHANGE;
 		var pointDiff = Math.abs(this.points - opponent.points)
 		var max_change = pointDiff / 2;
-
-		if (this.points < opponent.points) {
-			this.points += pointDiff * WEAK_MULTIPLIER;
-		}
 
 		if (pointDiff >= MIN_DIFF_FOR_MAX && change > pointDiff / 2) {
 				change = pointDiff / 2;
@@ -50,6 +56,14 @@ class Player {
 			this.matchesWon++;
 			this.winStreak++;
 			this.winStreakBonus += WIN_STREAK_BASE;
+
+			if (this.points < opponent.points) {
+				change += pointDiff * WEAK_MULTIPLIER;
+			}
+
+			else if (this.points > opponent.points) {
+				change -= (pointDiff - 50) / 10;
+			}
 
 			if (change > 0 && change < MIN_PT_GAIN) {
 				change = MIN_PT_GAIN;
@@ -88,13 +102,7 @@ class Player {
 			}
 		}
 
-		this.points += change;
-
-		this.points = parseInt(this.points, 10);
-
-		if (this.points < MIN_PT) {
-			this.points = MIN_PT;
-		}
+		return change;
 	}
 
 	static compare(playerOne, playerTwo) {
@@ -120,9 +128,25 @@ class Players {
 		return this.list.length;
 	}
 
-	get graphData() {
-		var max = Math.ceil((this.list[0] / NUM_BARS_GRAPH) / 10) * 10;
-		return null;
+	graphData() {
+		let rawInterval = this.list[0].points / NUM_BARS_GRAPH;
+		var interval = Math.ceil(rawInterval / 5) * 5;
+
+		if (interval < 5) {
+			interval = 5;
+		}
+
+		var data = [];
+		var index = this.count - 1;
+		var currCount = 0;
+		for (var i = 1; i <= NUM_BARS_GRAPH; i++) {
+			currCount = 0;
+			for (; index >= 0 && (i == NUM_BARS_GRAPH || this.list[index].points < interval * i); index--) {
+				currCount++;
+			}
+			data.push({x: i, y: currCount, label: ((i - 1) * interval) + "-" + (i * interval - 1)});
+		}
+		return data;
 	}
 
 	getPlayerByID(ID) {
@@ -148,7 +172,7 @@ class Players {
 
 	rank() {
 		this.list.sort(Player.compare);
-		var table = document.getElementById("rankings");
+		var table = document.getElementById("rankingsTable");
 		var rows = table.rows;
 		var i = rows.length;
 		while (--i) {

@@ -1,0 +1,142 @@
+	<!DOCTYPE html>
+	<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Table Tennis Ranked</title>
+		<link rel="stylesheet" type="text/css" href="pingpong.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+		<script src="pingpong.js"></script>
+		<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	</head>
+	<body>
+		<header id = header>
+			<div class="nav" id="topNav"></div>
+			<script>
+				$(document).ready(function(){
+
+					$('#topNav').load("nav.html");
+
+				});
+			</script>
+		</header>
+		<div id = "addPlayer">
+			<h3>Add Player</h3>
+			<p>Enter input in the fields, then click "Submit"</p>
+
+			<label for="firstName">First name: </label> 
+			<input type="text" name="firstName" id="firstName"><br>
+
+			<label for="lastName">Last name: </label>
+			<input type="text" name="lastName" id="lastName"><br>
+
+			<label for="ID">ID: </label> 
+			<input type="number" name="ID" id="ID"><br>
+
+			<input type="button" onclick="addPlayerClick()" value="Add">
+
+			<p id = "addPlayerMessage"> </p><br><br>
+		</div>
+
+		<div id = "startMatch">
+			<h3>Start Match</h3>
+			<p>Enter the ID's of the players, then click "Submit</p>
+
+			<label for="playerOneStart">Player One: </label> 
+			<input type="number" name="playerOneStart" id="playerOneStart"><br>
+
+			<label for="playerTwoStart">Player Two: </label> 
+			<input type="number" name="playerTwoStart" id="playerTwoStart"><br>
+
+			<input type="button" onclick="startMatchClick()" value="Start Match">
+
+			<p id = "startMatchMessage"> </p><br><br>
+		</div>
+
+		<div id = "endMatch">
+			<h3>End Match</h3>
+			<p>Enter the ID's of the players, then click "Submit</p>
+
+			<label for="playerOneEnd">Player One: </label> 
+			<input type="number" name="playerOneEnd" id="playerOneEnd"><br>
+
+			<label for="playerOneScore">Player One's Score</label>
+			<input type="number" name="playerOneScore" id="playerOneScore"><br>
+
+			<label for="playerTwoEnd">Player Two: </label> 
+			<input type="number" name="playerTwoEnd" id="playerTwoEnd"><br>
+
+			<label for="playerTwoScore">Player Two's Score</label>
+			<input type="number" name="playerTwoScore" id="playerTwoScore"><br>
+
+			<input type="button" onclick="endMatchClick()" value="End Match">
+
+			<p id = "endMatchMessage"> </p><br><br>
+		</div>
+
+		<div id = "simulation">
+			<h3>Simulation</h3>
+
+			<label for="numPlayers">Number of Players: </label> 
+			<input type="number" name="numPlayers" id="numPlayers"><br>
+
+			<input type="button" onclick="simulate()" value="Simulate">
+
+			<p id = "simulationMessage"> </p><br><br>
+		</div>
+
+		<div id = "rankings">
+			<h3>Rankings</h3><br>
+
+			<table id = "rankingsTable">
+				<tr class = "tableHeader">
+					<td>Rank</td>
+					<td>Name</td>
+					<td>Points</td>
+				</tr>
+			</table>
+
+			<div id="rankingsGraph" class="chart" style="height: 300px; width: 100%;">
+			</div>
+		</body>
+		<script type="text/javascript">
+			var players = new Players();
+			var simulation = new Simulation();
+			var chart = new CanvasJS.Chart("rankingsGraph", {data: [{dataPoints: []}]});
+
+			function addPlayerClick() {
+				var firstName = document.getElementById("firstName").value;
+				var lastName = document.getElementById("lastName").value;
+				var ID = parseInt(document.getElementById("ID").value, 10);
+				var player = new Player(firstName, lastName, ID);
+				players.add(player);
+				document.getElementById("firstName").value = "";
+				document.getElementById("lastName").value = "";
+				document.getElementById("ID").value = "";
+			}
+
+			function startMatchClick() {
+				var playerOne = players.getPlayerByID(document.getElementById("playerOneStart").value);
+				var playerTwo = players.getPlayerByID(document.getElementById("playerTwoStart").value);
+				var whichPlayer = Math.floor(Math.random() * 2 + 1) == 1 ? playerOne.firstName : playerTwo.firstName;
+				document.getElementById("startMatchMessage").innerHTML = whichPlayer + " serves.";
+			}
+
+			function endMatchClick() {
+				var playerOne = document.getElementById("playerOneEnd").value;
+				var playerTwo = document.getElementById("playerTwoEnd").value;
+				var playerOneScore = parseInt(document.getElementById("playerOneScore").value, 10);
+				var playerTwoScore = parseInt(document.getElementById("playerTwoScore").value, 10);
+				players.finishMatch(playerOne, playerOneScore, playerTwo, playerTwoScore);
+			}
+
+			function simulate() {
+				var numPlayers = parseInt(document.getElementById("numPlayers").value, 10);
+				simulation.reset(numPlayers);
+				simulation.doAllMatches();
+				chart.options.data[0].dataPoints = simulation.graphData();
+				chart.render();
+			}
+		</script>
+	</html>
