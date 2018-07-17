@@ -12,13 +12,13 @@
 	</head>
 	<body>
 		<header id = header>
-			<div class="nav" id="topNav"></div>
+			<div class="nav" id="topNav" onload="loadNav()"></div>
 			<script>
-				$(document).ready(function(){
+				function loadNav(){
 
-					$('#topNav').load("nav.html");
+					document.getElementById("topNav").innerHTML = 'object type="text/html" data="nav.html"';
 
-				});
+				}
 			</script>
 		</header>
 		
