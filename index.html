@@ -4,8 +4,8 @@
 		<meta charset="utf-8" />
 		<title>Table Tennis Ranked</title>
 		<link rel="stylesheet" type="text/css" href="pingpong.css">
+		<script src="pingpong.js"></script>
 	</head>
-	<script src="pingpong.js"></script>
 	<body>
 		<div id = "addPlayer">
 			<h3>Add Player</h3>
@@ -82,10 +82,16 @@
 					<td>Points</td>
 				</tr>
 			</table>
+
+			<div id="rankingsGraph" class="chart" style="height: 300px; width: 100%;">
 		</div>
 	</body>
 	<script type="text/javascript">
 		var players = new Players();
+		var simulation = new Simulation();
+		var chart = new CanvasJS.chart("rankingsGraph");
+
+
 
 		function addPlayerClick() {
 			var firstName = document.getElementById("firstName").value;
@@ -115,8 +121,10 @@
 
 		function simulate() {
 			var numPlayers = parseInt(document.getElementById("numPlayers").value, 10);
-			var simulation = new Simulation(numPlayers);
+			simulation.reset(numPlayers);
 			simulation.doAllMatches();
+			//chart.data[0] = simulation.graphData;
+			//chart.render();
 		}
 	</script>
 	</html>
