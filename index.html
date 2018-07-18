@@ -5,6 +5,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<title>Allen Table Tennis</title>
 		<link rel="stylesheet" type="text/css" href="pingpong.css">
+		<link rel="stylesheet" type="text/css" href="nav.css">
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 		<script src="pingpong.js"></script>
 		<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
@@ -12,14 +13,26 @@
 	</head>
 	<body>
 		<header id = header>
-			<div class="nav" id="topNav" onload="loadNav()"></div>
-			<script>
-				function loadNav(){
-
-					document.getElementById("topNav").innerHTML = 'object type="text/html" data="nav.html"';
-
+			<div class="nav" id="topNav">
+			<a href="index.html" class="active">Home</a>
+			<a href="rules.html">Rules</a>
+			<a href="ranking.html">Rankings</a>
+			<a href="events.html">Events</a>
+			<a href="javascript:void(0);" class="icon" onclick="toggleResponsive()">
+				<i class="fa fa-bars"></i>
+			</a>
+			<script type="text/javascript">
+				/* Toggle between adding and removing the "responsive" class to topnav when the user clicks on the icon */
+				function toggleResponsive() {
+					var x = document.getElementById("topNav");
+					if (x.className === "nav") {
+						x.className += " responsive";
+					} else {
+						x.className = "nav";
+					}
 				}
 			</script>
+		</div>
 		</header>
 		
 		</html>

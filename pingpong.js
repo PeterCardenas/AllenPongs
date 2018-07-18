@@ -212,6 +212,19 @@ class Simulation extends Players {
 		}
 	}
 
+	get initTotalPoint() {
+		return this.count * INIT_PT_VAL;
+	}
+
+	get totalPoint() {
+		return this.list.reduce((total, currSim, index, sims) => {
+			return total += currSim.points;
+		}, 0);
+	}
+	get range() {
+		return this.list[0] - this.list[this.count - 1];
+	}
+
 	reset(numPlayers) {
 		this.list = [];
 		for (var i = 1; i <= numPlayers; i++) {
@@ -234,3 +247,4 @@ class Simulation extends Players {
 		}
 	}
 }
+
